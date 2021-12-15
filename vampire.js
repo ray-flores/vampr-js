@@ -37,20 +37,57 @@ class Vampire {
     return this.numberOfVampiresFromOriginal < vampire.numberOfVampiresFromOriginal;
   }
 
-    // Returns the vampire object with that name, or null if no vampire exists with that name
-    vampireWithName(name) {
+  /** Tree traversal methods **/
 
+  // Returns the vampire object with that name, or null if no vampire exists with that name
+  vampireWithName(name) {
+    
+  if (name === this.name) {
+    return this;
+  }
+    
+  for (const offspring of this.offspring) {
+    const result = offspring.vampireWithName(name);
+    if (result) {
+      return result;
     }
+  }
+
+  return null;
+
+  }
+
+  // Returns the total number of vampires that exist
+  get totalDescendents() {
+
+    let totalVampires = 0; // 1
   
-    // Returns the total number of vampires that exist
-    get totalDescendents() {
-  
+    for (const offspring of this.offspring) {
+      totalVampires++;
+      totalVampires = totalVampires + offspring.totalDescendents;
     }
-  
-    // Returns an array of all the vampires that were converted after 1980
-    get allMillennialVampires() {
-  
+
+    return totalVampires;
+    
+  }
+
+  // Returns an array of all the vampires that were converted after 1980
+  get allMillennialVampires() {
+    let millenialVampires = [];
+    if (this.yearConverted > 1980) {
+      millenialVampires.push(this);
     }
+
+    for (const offspring of this.offspring) {
+      const otherMillenialVampires = offspring.allMillennialVampires;
+      if (otherMillenialVampires) {
+        millenialVampires = millenialVampires.concat(otherMillenialVampires);
+      }
+    }
+
+    return millenialVampires;
+
+  }
 
   /** Stretch **/
 
@@ -63,27 +100,6 @@ class Vampire {
 
   }
 }
-
-const original = new Vampire("Original", 0);
-
-const ansel = new Vampire("Ansel", 1);
-const bart = new Vampire("Bart", 2);
-
-const elgort = new Vampire("Elgort", 2);
-const sarah = new Vampire("Sarah", 3);
-
-const andrew = new Vampire("Andrew", 3);
-
-original.addOffspring(ansel);
-original.addOffspring(bart);
-
-ansel.addOffspring(elgort);
-ansel.addOffspring(sarah);
-
-elgort.addOffspring(andrew);
-
-
-
 
 module.exports = Vampire;
 
